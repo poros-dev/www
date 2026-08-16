@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>poros.sh/poros</title>
+<!--
+  The Go toolchain fetches this page when it resolves the import path
+  poros.sh/poros. It reads go-import and nothing else, so the query string
+  ?go-get=1 that it appends is irrelevant to GitHub Pages, which serves this file
+  for any query.
+
+  Subpackages need no page of their own. The toolchain asks for the full path
+  first, GitHub Pages answers 404, and it walks up until it reaches this one.
+
+  go-source is what makes pkg.go.dev link a symbol to the line that declares it.
+  The branch is spelled in both templates, so a repository that renames its
+  default branch breaks these links and nothing else.
+-->
+<meta name="go-import" content="poros.sh/poros git https://github.com/poros-dev/poros">
+<meta name="go-source" content="poros.sh/poros https://github.com/poros-dev/poros https://github.com/poros-dev/poros/tree/main{/dir} https://github.com/poros-dev/poros/blob/main{/dir}/{file}#L{line}">
+<!--
+  For people rather than tooling. A meta refresh, not an HTTP redirect: the Go
+  toolchain reads the tags above before anything would follow this, and an HTTP
+  redirect at this URL would send it somewhere that serves no go-import at all.
+-->
+<meta http-equiv="refresh" content="0; url=https://pkg.go.dev/poros.sh/poros">
+<link rel="canonical" href="https://pkg.go.dev/poros.sh/poros">
+</head>
+<body>
+<p>Redirecting to <a href="https://pkg.go.dev/poros.sh/poros">pkg.go.dev/poros.sh/poros</a>.</p>
+<p>Source: <a href="https://github.com/poros-dev/poros">github.com/poros-dev/poros</a>.</p>
+</body>
+</html>

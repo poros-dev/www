@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poros — just-in-time Kubernetes access</title>
+<meta name="description" content="Poros provides just-in-time access to Kubernetes clusters without standing privileges.">
+<meta property="og:title" content="Poros">
+<meta property="og:description" content="Just-in-time access to Kubernetes clusters without standing privileges.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://poros.sh/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%230b7285' stroke-width='1.8' stroke-linecap='round'><circle cx='10' cy='10' r='7'/><path d='M10 6.5v7'/><path d='M6.5 10h7'/></svg>">
+<style>
+  /* Light is the base. Dark redefines only the tokens, so no colour is
+     defined in one place and missing from the other. */
+  :root {
+    --bg: #ffffff;
+    --surface: #f6f8f9;
+    --text: #16211f;
+    --muted: #5a6b68;
+    --line: #dde4e3;
+    --accent: #0b7285;
+    --warn-bg: #fff8e6;
+    --warn-line: #e8d08a;
+    --warn-text: #6b4e00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1413;
+      --surface: #161f1e;
+      --text: #e6ecea;
+      --muted: #9aaba8;
+      --line: #263230;
+      --accent: #4dbfd4;
+      --warn-bg: #241d09;
+      --warn-line: #5a4a15;
+      --warn-text: #e5c96a;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 46rem; margin: 0 auto; padding: 3.5rem 1.25rem 4rem; }
+  a { color: var(--accent); }
+
+  .brand { display: flex; align-items: center; gap: .6rem; font-weight: 650; font-size: 1.1rem; }
+  .brand svg { width: 1.4rem; height: 1.4rem; color: var(--accent); }
+
+  h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: 2.5rem 0 .75rem; letter-spacing: -.02em; }
+  .lede { font-size: 1.15rem; color: var(--muted); margin: 0 0 2rem; }
+  h2 { font-size: 1.15rem; margin: 2.75rem 0 .75rem; letter-spacing: -.01em; }
+
+  .alpha {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-line);
+    color: var(--warn-text);
+    border-radius: 8px;
+    padding: .7rem .9rem;
+    font-size: .92rem;
+    margin: 0 0 2rem;
+  }
+
+  ol, ul { padding-left: 1.15rem; }
+  li { margin: .35rem 0; }
+
+  table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+  th, td { text-align: left; padding: .5rem .7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .88em;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: .08em .35em;
+  }
+  .scroll { overflow-x: auto; }
+
+  .links { display: flex; flex-wrap: wrap; gap: .6rem; margin: 2.25rem 0 0; }
+  .links a {
+    display: inline-block;
+    padding: .5rem .9rem;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--surface);
+    text-decoration: none;
+    font-size: .95rem;
+  }
+  .links a:hover { border-color: var(--accent); }
+
+  footer {
+    margin-top: 3.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: .88rem;
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+      <circle cx="10" cy="10" r="7"></circle>
+      <path d="M10 6.5v7"></path>
+      <path d="M6.5 10h7"></path>
+    </svg>
+    Poros
+  </div>
+
+  <h1>Just-in-time access to Kubernetes, without standing privileges.</h1>
+  <p class="lede">
+    Kubernetes access usually outlasts the work that required it. Poros replaces
+    permanent role bindings with explicit, time-bound grants.
+  </p>
+
+  <p class="alpha">
+    <strong>Early alpha.</strong> The APIs are <code>v1alpha1</code> and backward
+    compatibility is not guaranteed.
+  </p>
+
+  <h2>How it works</h2>
+  <ol>
+    <li>Users request predefined access packages.</li>
+    <li>Approval follows the policy on each package.</li>
+    <li>The control plane signs every approved grant.</li>
+    <li>An in-cluster agent creates and removes Kubernetes RBAC.</li>
+    <li>PostgreSQL stores the audit trail and control-plane state.</li>
+  </ol>
+  <p>
+    Kubernetes remains the authorization boundary. The agent opens outbound
+    connections to the control plane, so a managed cluster needs no inbound
+    network path.
+  </p>
+
+  <h2>Components</h2>
+  <div class="scroll">
+    <table>
+      <tr><th>Component</th><th>Responsibility</th></tr>
+      <tr><td><code>apiserver</code></td><td>Owns the API, persistence, audit records, enrollment, credentials, and signing keys.</td></tr>
+      <tr><td><code>agent</code></td><td>Verifies grants and reconciles RBAC inside a managed cluster.</td></tr>
+      <tr><td><code>proxy</code></td><td>Authenticates <code>kubectl</code> traffic and forwards it through agent tunnels.</td></tr>
+      <tr><td><code>web</code></td><td>Server-rendered user and administrator interface.</td></tr>
+    </table>
+  </div>
+
+  <h2>Security model</h2>
+  <ul>
+    <li>Access grants carry issue and expiry times.</li>
+    <li>The control plane signs grants with asymmetric keys, and agents verify before creating RBAC.</li>
+    <li>Invalid or missing signatures fail closed.</li>
+    <li>The proxy refuses access when it cannot record the request.</li>
+    <li>The proxy carries stream payloads without inspecting or recording them.</li>
+  </ul>
+
+  <div class="links">
+    <a href="https://github.com/poros-dev/poros">Source on GitHub</a>
+    <a href="https://pkg.go.dev/poros.sh/poros">Go reference</a>
+    <a href="https://github.com/poros-dev/poros#readme">Documentation</a>
+  </div>
+
+  <footer>
+    <p>
+      Poros is licensed under the Apache License 2.0. The name comes from the
+      Greek <span lang="el">πόρος</span>, a passage or way through.
+    </p>
+  </footer>
+</main>
+</body>
+</html>
